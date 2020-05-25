@@ -1,4 +1,4 @@
-function VittoPowerAnalysisV4_0
+function VittoPowerAnalysisV4_1
 warning('off')
 init.vids = {'*.m4v','*.mov','*.avi','*.mp4'};
 
@@ -79,6 +79,9 @@ if isempty(varargin)
     error('Expects at least one string-value input pair.')
 elseif rem(numel(varargin),2)
     error('Variable input expected to be string-value pairs.')
+end
+try varargin{arrayfun(@(n)isa(varargin{n},'numeric') && isnan(varargin{n}),1:numel(varargin))} = [];
+catch
 end
 
 [path,title] = fileparts(vid);
