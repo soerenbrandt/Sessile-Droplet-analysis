@@ -21,4 +21,4 @@ We tracked the evaporation of droplets resting on a flat substrate. DropletAnaly
     - DropletAnalysis uses the elliptical approximation by default.
 2. THe user can select to plot a video of the analysis (e.g. see [example](Video.mp4))
 
-<img src="Droplet-analysis-results.png" width=400>
+<img src="example/Droplet-analysis-results.png" width=400>
