@@ -14,13 +14,7 @@ Im is an image of the droplet centered in rectangle rect. estimate is a size est
 
 To install: 
 ```shell 
-git close https://github.com/soerenbrandt/Sessile-Droplet-analysis.git
-pip install ./Sessile-Droplet-analysis
-```
-
-To remove: 
-```shell
-pip remove Sessile-Droplet-analysis
+git clone https://github.com/soerenbrandt/Sessile-Droplet-analysis.git
 ```
 
 #### Application:
