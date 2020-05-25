@@ -1,4 +1,4 @@
-function VittoPowerAnalysisV4_3
+function VittoPowerAnalysisV4_4
 FPS = 1;
 warning('off')
 init.vids = {'*.m4v','*.mov','*.avi','*.mp4'};
@@ -51,6 +51,7 @@ saveData(vid, true, ...
 %---------------------------------------------------------------
 ImCount = 1;
 w = waitbar(0,'Starting');
+addTime = @(h,t)arrayfun(@(x)title(x,['Frame time: ',num2str(t),'s']),h.Children);
 while hasFrame(v) && ImCount < videoLength*FPS
     currentImage = readFrame(v); % read the next video frame to analyze
     
@@ -65,7 +66,8 @@ while hasFrame(v) && ImCount < videoLength*FPS
              'Volume /mm^3', drop.Volume*scale^3);
     
     if rem(ImCount,reportFreq) == 0
-        plot(drop);
+        h = plot(drop);
+        addTime(h,v.CurrentTime);
     end
     
     ImCount = ImCount +1;
@@ -74,6 +76,8 @@ end
 delete(w)
 
 end
+
+
 
 
 function saveData(vid, new, varargin)
