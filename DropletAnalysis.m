@@ -1,4 +1,4 @@
-function VittoPowerAnalysisV5_1
+function DropletAnalysisV5_1
 FPS = 1;
 warning('off')
 init.vids = {'*.m4v','*.mov','*.avi','*.mp4'};
