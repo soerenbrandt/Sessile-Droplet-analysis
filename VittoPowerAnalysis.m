@@ -1,4 +1,4 @@
-function VittoPowerAnalysisV5_0
+function VittoPowerAnalysisV5_1
 FPS = 1;
 warning('off')
 init.vids = {'*.m4v','*.mov','*.avi','*.mp4'};
@@ -63,11 +63,14 @@ switch response
     ImCount = 1;
     w = waitbar(0,'Starting');
     addTime = @(h,t)arrayfun(@(x)title(x,['Frame time: ',num2str(t),'s']),h.Children);
-    while hasFrame(v) && ImCount < videoLength*FPS
+    timeRem = nan(1,100); estFrames = videoLength*FPS;
+    while hasFrame(v) && ImCount < estFrames
+        tic % start clock
         currentImage = readFrame(v); % read the next video frame to analyze
 
         if v.CurrentTime >= ImCount/FPS
-        waitbar(ImCount/videoLength,w,['Second ',num2str(ImCount),' of ',num2str(videoLength)]);
+        waitbar(ImCount/videoLength,w,['Second ',num2str(ImCount),' of ',num2str(videoLength),...
+                                       ' (time rem: ',num2str(round((estFrames-ImCount)*nanmean(timeRem)/60)),'min)']);
 
         drop = droplet(currentImage, rect, setRadius, baseline);
         setRadius = min([setRadius,drop.Radius]); % update reference radius
@@ -82,6 +85,7 @@ switch response
         end
 
         ImCount = ImCount +1;
+        timeRem(rem(ImCount,100)+1) = toc;
         end
     end
     delete(w)
@@ -111,11 +115,14 @@ switch response
     ImCount = 1;
     w = waitbar(0,'Starting');
     addTime = @(h,t)arrayfun(@(x)title(x,['Frame time: ',num2str(t),'s']),h.Children);
-    while hasFrame(v) && ImCount < 50%videoLength*FPS
+    timeRem = nan(1,100); estFrames = videoLength*FPS;
+    while hasFrame(v) && ImCount < videoLength*FPS
+        tic % start clock
         currentImage = readFrame(v); % read the next video frame to analyze
 
         if v.CurrentTime >= ImCount/FPS
-        waitbar(ImCount/videoLength,w,['Second ',num2str(ImCount),' of ',num2str(videoLength)]);
+        waitbar(ImCount/videoLength,w,['Second ',num2str(ImCount),' of ',num2str(videoLength),...
+                                       ' (time rem: ',num2str(round((estFrames-ImCount)*nanmean(timeRem)/60)),'min)']);
 
         drop = droplet(currentImage, rect, setRadius, baseline);
         setRadius = min([setRadius,drop.Radius]); % update reference radius
@@ -141,6 +148,7 @@ switch response
         editedFrames(ImCount+1) = getframe(movFrame);
         
         ImCount = ImCount +1;
+        timeRem(rem(ImCount,100)+1) = toc;
         end
     end
     
@@ -198,6 +206,10 @@ end
 try varargin{arrayfun(@(n)isa(varargin{n},'numeric') && isnan(varargin{n}),1:numel(varargin))} = [];
 catch
 end
+try varargin(cellfun(@(x)~isa(x,'char') && any(isnan(x)), varargin)) = {''}; % replace NaN with white space
+catch
+    disp('now')    
+end
 
 [path,title] = fileparts(vid);
     
@@ -206,6 +218,6 @@ end
     if new
         fprintf(fid,['%s',repmat(', %s',1,numel(varargin)/2-1),'\n'],varargin{1:2:end});
     end
-    fprintf(fid,['%f',repmat(', %f',1,numel(varargin)/2-1),'\n'],varargin{2:2:end});
+    fprintf(fid,['%f',repmat(',%f',1,numel(varargin)/2-1),'\n'],varargin{2:2:end});
     fclose(fid);
 end
