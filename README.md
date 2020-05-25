@@ -12,6 +12,17 @@ Im is an image of the droplet centered in rectangle rect. estimate is a size est
 - [fit_ellipse(x,y,axis_handle)](fit_ellipse.m) was adopted from [Ohad Gal](https://www.mathworks.com/matlabcentral/fileexchange/3215-fit_ellipse). x,y are a set of points in 2 column vectors. axis_handle is an optional handle to an axis, at which the estimated ellipse will be drawn along with it's axes.
 - [DropletAnalysis](DropletAnalysis.m) takes a video of a sessile droplet evaporating in place and tracks the shape and size of the droplet.
 
+To install: 
+```shell 
+git close https://github.com/soerenbrandt/Sessile-Droplet-analysis.git
+pip install ./Sessile-Droplet-analysis
+```
+
+To remove: 
+```shell
+pip remove Sessile-Droplet-analysis
+```
+
 #### Application:
 We tracked the evaporation of droplets resting on a flat substrate. DropletAnalysis uses a video recorded at 1 FPS and measures the size and shape in each frame. The results can be saved as a video and csv file.
 
