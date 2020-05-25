@@ -1,4 +1,5 @@
-function VittoPowerAnalysisV4_1
+function VittoPowerAnalysisV4_3
+FPS = 1;
 warning('off')
 init.vids = {'*.m4v','*.mov','*.avi','*.mp4'};
 
@@ -9,7 +10,7 @@ init.vids = {'*.m4v','*.mov','*.avi','*.mp4'};
 vid = [path, name];
 
 v = VideoReader(vid);
-videoLength = round(v.Duration*v.FrameRate);
+videoLength = ceil(v.Duration);
 
 % request scale
 response = inputdlg({'Number of pixels','per number of mm','Show every # of fits'},['Scale for ',name],1,{'86','1','inf'});
@@ -41,23 +42,25 @@ uiwait(h)
 
 % Start new csv file
 saveData(vid, true, ...
-             'Radius /mm',drop.Radius*scale,'CA left', drop.CA.left, 'CA right', drop.CA.right, ...
+             'Time /s',0,'Radius /mm',drop.Radius*scale,'CA left', drop.CA.left, 'CA right', drop.CA.right, ...
              'Height /mm', drop.Height*scale, 'Base radius /mm', drop.Base*scale, ...
              'Volume /mm^3', drop.Volume*scale^3);
 
 %---------------------------------------------------------------
 %         Step 3 finish video
 %---------------------------------------------------------------
-ImCount = 2;
+ImCount = 1;
 w = waitbar(0,'Starting');
-while hasFrame(v) && ImCount < 10000
-    waitbar(ImCount/videoLength,w,['Frame ',num2str(ImCount),' of ',num2str(videoLength)]);
-        
+while hasFrame(v) && ImCount < videoLength*FPS
     currentImage = readFrame(v); % read the next video frame to analyze
+    
+    if v.CurrentTime >= ImCount/FPS
+    waitbar(ImCount/videoLength,w,['Second ',num2str(ImCount),' of ',num2str(videoLength)]);
+        
     drop = droplet(currentImage, rect, setRadius, baseline);
     setRadius = min([setRadius,drop.Radius]); % update reference radius
     saveData(vid, false, ...
-             'Radius /mm',drop.Radius*scale,'CA left', drop.CA.left, 'CA right', drop.CA.right, ...
+             'Time /s',v.CurrentTime,'Radius /mm',drop.Radius*scale,'CA left', drop.CA.left, 'CA right', drop.CA.right, ...
              'Height /mm', drop.Height*scale, 'Base radius /mm', drop.Base*scale, ...
              'Volume /mm^3', drop.Volume*scale^3);
     
@@ -66,6 +69,7 @@ while hasFrame(v) && ImCount < 10000
     end
     
     ImCount = ImCount +1;
+    end
 end
 delete(w)
 
